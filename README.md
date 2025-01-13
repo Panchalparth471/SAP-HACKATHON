@@ -70,7 +70,7 @@ Provide a clear and concise title and description for the pull request.
 
 Click the Create Pull Request button.
 
-##Pull Request Guidelines
+## Pull Request Guidelines
 
 Title
 
