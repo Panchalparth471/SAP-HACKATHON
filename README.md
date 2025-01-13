@@ -16,17 +16,17 @@ Click the Fork button to create a copy of the repository under your GitHub accou
 
 Clone the forked repository to your local machine:
 
-git clone [https://github.com/your-username/repository-name.git](https://github.com/Panchalparth471/SAP-HACKATHON)
+```git clone [https://github.com/your-username/repository-name.git](https://github.com/Panchalparth471/SAP-HACKATHON)```
 
 Navigate to the project directory:
 
-cd repository-name
+```cd repository-name```
 
 ## 3. Create a New Branch
 
 Create a new branch for your changes:
 
-git checkout -b feature/your-feature-name
+```git checkout -b feature/your-feature-name```
 
 ## 4. Make Changes
 
@@ -44,17 +44,17 @@ Ensure all tests pass before proceeding.
 
 Add your changes to the staging area:
 
-git add .
+```git add .```
 
 Commit your changes with a descriptive message:
 
-git commit -m "Add detailed description of the changes made"
+```git commit -m "Add detailed description of the changes made"```
 
 ## 7. Push Your Changes
 
 Push your changes to your forked repository:
 
-git push origin feature/your-feature-name
+```git push origin feature/your-feature-name```
 
 ## 8. Create a Pull Request
 
