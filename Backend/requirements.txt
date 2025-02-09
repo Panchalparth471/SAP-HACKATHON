@@ -1,0 +1,9 @@
+Flask
+Flask-PyMongo
+Flask-OAuthlib
+werkzeug
+pymongo
+python-dotenv
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
