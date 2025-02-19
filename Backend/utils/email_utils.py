@@ -7,12 +7,17 @@ def send_reset_email(email, reset_url):
     sender_password = "whja atqc uhqd wltx"  # Ensure this is an app password, not your actual password
     subject = "Password Reset Request"
     body = f"""
-    Hello,
-
-    We received a request to reset your password. Click the link below to reset your password:
-    {reset_url}
-
-    If you didn't request this, please ignore this email.
+    <html>
+        <body>
+            <p>Hello,</p>
+            <p>We received a request to reset your password.</p>
+            
+            <p>
+               Your OTP is  {reset_url} .
+            </p>
+            <p>If you didn't request this, please ignore this email.</p>
+        </body>
+    </html>
     """
     print(f"Reset URL: {reset_url}")  # Debugging output
     
@@ -20,7 +25,7 @@ def send_reset_email(email, reset_url):
     msg['From'] = sender_email
     msg['To'] = email
     msg['Subject'] = subject
-    msg.attach(MIMEText(body, 'plain'))
+    msg.attach(MIMEText(body, 'html'))
     
     try:
         print("Connecting to SMTP server...")  # Debug
