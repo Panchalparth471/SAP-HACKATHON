@@ -1,16 +1,69 @@
-import React from 'react';
-import { View, Text, ScrollView, Image } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, ScrollView, Image, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function PrescriptionScreen({ route }) {
-    const { searchData } = route.params; // ✅ API response
+    const { searchData } = route.params;
     const { name } = route.params;
     const navigation = useNavigation();
+    const [loading, setLoading] = useState(false);
+
     console.log(searchData.image_url);
 
+    // Save Medicine Function
+    const saveMedicine = async () => {
+        setLoading(true);
+        try {
+            const token = await AsyncStorage.getItem("auth_token");
+            console.log(token)
+            if (!token) {
+                Alert.alert("Error", "User not logged in.");
+                setLoading(false);
+                return;
+            }
+
+            const response = await fetch("http://192.168.189.54:5001/api/v1/save_medicine", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    medicine_details: {
+                        brand_name: name,
+                        generic_name: searchData.generic_name,
+                        purpose: searchData.purpose,
+                        active_ingredient: searchData.active_ingredient,
+                        dosage_and_administration: searchData.dosage_and_administration,
+                        image_url: searchData.image_url,
+                        do_not_use: searchData.do_not_use,
+                        when_using: searchData.when_using,
+                        indications_and_usage:searchData.indications_and_usage
+                        
+
+
+                    }
+                }),
+            });
+
+            const data = await response.json();
+            setLoading(false);
+
+            if (response.ok) {
+                Alert.alert("Success", "Medicine saved successfully!");
+            } else {
+                Alert.alert("Error", data.message || "Failed to save medicine.");
+            }
+        } catch (error) {
+            setLoading(false);
+            Alert.alert("Error", "Something went wrong. Please try again.");
+        }
+    };
+
     return (
-        <View style={{ flex: 1, backgroundColor: 'white',marginTop:50 }}>
+        <View style={{ flex: 1, backgroundColor: 'white', marginTop: 50 }}>
             
             <View style={{
                 position: 'absolute',
@@ -28,13 +81,11 @@ export default function PrescriptionScreen({ route }) {
                 <Text style={{ color: 'white', fontWeight: '500', fontSize: 25, marginLeft: 60 }}>Medicine Details</Text>
             </View>
 
-          
             <ScrollView
-                style={{ flex: 1, marginTop: 80 }} 
-                contentContainerStyle={{ paddingBottom: 20 }}
+                style={{ flex: 1, marginTop: 80, marginBottom: 80 }}  // Ensure space for button
+                contentContainerStyle={{ paddingBottom: 100 }}  // Avoid button overlap
                 showsVerticalScrollIndicator={false}
             >
-              
                 <View style={{
                     width: '98%',
                     borderColor: 'grey',
@@ -78,6 +129,33 @@ export default function PrescriptionScreen({ route }) {
                     <Text style={{ fontSize: 18, color: '#555' }}>{searchData.indications_and_usage}</Text>
                 </View>
             </ScrollView>
+
+            {/* Save Medicine Button - Fixed at Bottom */}
+            <View style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                backgroundColor: 'white',
+                padding: 10,
+                elevation: 10  // Shadow effect
+            }}>
+                <TouchableOpacity
+                    onPress={saveMedicine}
+                    disabled={loading}
+                    style={{
+                        backgroundColor: '#0E64D2',
+                        padding: 15,
+                        borderRadius: 8,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
+                >
+                    <Text style={{ color: 'white', fontSize: 18, fontWeight: '600' }}>
+                        {loading ? "Saving..." : "Save Medicine"}
+                    </Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 }

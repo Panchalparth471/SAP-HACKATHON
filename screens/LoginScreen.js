@@ -1,25 +1,71 @@
-import React from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Constants from "expo-constants";
+
+const BACKEND_URL = Constants.expoConfig.extra.backendUrl;
 
 export default function LoginScreen({ navigation }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Error", "All fields are required.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch(`${BACKEND_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+      setLoading(false);
+
+      if (response.ok) {
+        await AsyncStorage.setItem("user_email", email);
+        await AsyncStorage.setItem("auth_token", data.token);
+        
+        console.log(await AsyncStorage.getItem("auth_token"))
+        Alert.alert("Success", "Login successful!");
+        navigation.navigate("Home");
+      } else {
+        Alert.alert("Error", data.message || "Login failed.");
+      }
+    } catch (error) {
+      setLoading(false);
+      console.log(error)
+      Alert.alert("Error", "Something went wrong. Please try again.");
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Welcome Back!</Text>
       <Text style={styles.subheader}>Login to your account</Text>
 
-      <TextInput style={styles.input} placeholder="Enter Your Email" />
-      <TextInput style={styles.input} placeholder="Enter Your Password" secureTextEntry={true} />
+      <TextInput style={styles.input} placeholder="Enter Your Email" onChangeText={setEmail} />
+      <TextInput style={styles.input} placeholder="Enter Your Password" secureTextEntry={true} onChangeText={setPassword} />
 
       <TouchableOpacity>
-        <Text style={styles.forgotPassword}>Forgot Password?</Text>
+        <Text style={styles.forgotPassword} onPress={() => navigation.navigate("forgot")}>
+          Forgot Password?
+        </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.loginButton}>
-        <Text style={styles.buttonText}>Login</Text>
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin} disabled={loading}>
+        <Text style={styles.buttonText}>{loading ? "Logging in..." : "Login"}</Text>
       </TouchableOpacity>
 
       <Text style={styles.signupText}>
-        Don't have an account?{" "}
+        Don't have an account? {" "}
         <Text style={styles.signupLink} onPress={() => navigation.navigate("signup")}>
           Sign Up
         </Text>

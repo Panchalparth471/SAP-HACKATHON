@@ -15,11 +15,23 @@
       "supportsTablet": true
     },
     "android": {
-      
+      "package": "com.medify.cvmu",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
-    }
+    },
+    "extra": {
+      "backendUrl": "http://192.168.189.54:5001",
+      "eas": {
+        "projectId": "93ce6166-6724-4d72-8e30-3081a709a078"
+      }
+    },
+    "scheme": "medify",
+    "platforms": [
+      "ios",
+      "android"
+    ]
   }
 }
