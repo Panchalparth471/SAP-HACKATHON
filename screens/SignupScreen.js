@@ -33,15 +33,15 @@ export default function SignupScreen({ navigation }) {
       setLoading(false);
 
       if (response.ok) {
-        console.log("Signup Response:", data); // ✅ Debugging log
+        console.log("Signup Response:", data); //  Debugging log
 
-        // ✅ Ensure user_id exists in response before storing
+        //  Ensure user_id exists in response before storing
         if (!data.user_id) {
           Alert.alert("Error", "Signup successful, but user ID is missing.");
           return;
         }
 
-        // ✅ Store all user details in AsyncStorage
+        //  Store all user details in AsyncStorage
         await AsyncStorage.setItem("user_id", data.user_id);
         await AsyncStorage.setItem("user_name", name);
         await AsyncStorage.setItem("user_email", email);
