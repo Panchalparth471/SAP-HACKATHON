@@ -13,7 +13,7 @@ const SearchDoctor = ({ navigation }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [patientId, setPatientId] = useState(null);
 
-    // ✅ Fetch Patient ID from AsyncStorage Once
+    //  Fetch Patient ID from AsyncStorage Once
     useEffect(() => {
         const fetchPatientId = async () => {
             try {
@@ -50,7 +50,7 @@ const SearchDoctor = ({ navigation }) => {
                 Alert.alert("No Results", "No doctors found with that name.");
             }
 
-            console.log("Doctor Search Response:", response.data);  // ✅ Log API response
+            console.log("Doctor Search Response:", response.data);  //  Log API response
             setDoctors(response.data.doctors);
         } catch (error) {
             console.error("Error fetching doctors:", error.response?.data || error.message);
@@ -65,15 +65,15 @@ const SearchDoctor = ({ navigation }) => {
         try {
             const token = await AsyncStorage.getItem("auth_token");
 
-            // ✅ Ensure all required data is available
+            //  Ensure all required data is available
             if (!token || !patientId || !doctorId) {
                 Alert.alert("Error", "Invalid request. Missing user data.");
-                console.error("Missing Data:", { token, patientId, doctorId });  // ✅ Log missing data
+                console.error("Missing Data:", { token, patientId, doctorId });  //  Log missing data
                 return;
             }
 
             const requestBody = { patient_id: patientId, doctor_id: doctorId };
-            console.log("Sending request:", requestBody);  // ✅ Log request payload
+            console.log("Sending request:", requestBody);  //  Log request payload
 
             const response = await axios.post(
                 "http://192.168.189.54:5001/api/v1/request-access",
@@ -81,7 +81,7 @@ const SearchDoctor = ({ navigation }) => {
                 { headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" } }
             );
 
-            console.log("Request Response:", response.data);  // ✅ Log API response
+            console.log("Request Response:", response.data);  //  Log API response
             Alert.alert("Success", "Request sent successfully!");
         } catch (error) {
             console.error("Error sending request:", error.response?.data || error.message);
@@ -108,16 +108,16 @@ const SearchDoctor = ({ navigation }) => {
             {/* 🔹 Doctor List */}
             <FlatList
                 data={doctors}
-                keyExtractor={(item) => item.doctor_id || item._id}  // ✅ Ensure doctor_id is correct
+                keyExtractor={(item) => item.doctor_id || item._id}  //  Ensure doctor_id is correct
                 renderItem={({ item }) => {
-                    console.log("Doctor Item:", item);  // ✅ Log doctor data
+                    console.log("Doctor Item:", item);  //  Log doctor data
                     return (
                         <View style={styles.doctorCard}>
                             <Text style={styles.doctorName}>{item.name}</Text>
                             <Text style={styles.doctorEmail}>{item.email}</Text>
                             <TouchableOpacity 
                                 style={styles.button} 
-                                onPress={() => handleRequestAccess(item.doctor_id || item._id)}  // ✅ Ensure correct doctor_id
+                                onPress={() => handleRequestAccess(item.doctor_id || item._id)}  //  Ensure correct doctor_id
                             >
                                 <Text style={styles.buttonText}>Request Access</Text>
                             </TouchableOpacity>
