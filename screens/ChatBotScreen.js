@@ -23,7 +23,7 @@ export default function ChatBotScreen() {
         setLoading(true);
 
         try {
-            const response = await axios.post(API_URL, { query: input }); // ✅ Sending POST request with JSON body
+            const response = await axios.post(API_URL, { query: input }); //   Sending POST request with JSON body
             const botMessage = { id: Date.now().toString(), text: response.data, sender: "bot" };
             setMessages((prev) => [botMessage, ...prev]); // Append bot response
         } catch (error) {
