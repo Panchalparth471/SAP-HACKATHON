@@ -17,7 +17,7 @@ export default function Scan() {
     const [loading, setLoading] = useState(false);
     const [medicines, setMedicines] = useState([]); // Extracted medicine names
     const [medicineDetails, setMedicineDetails] = useState([]); // API-fetched details
-    const [isProcessed, setIsProcessed] = useState(false); // ✅ Track whether API has been called
+    const [isProcessed, setIsProcessed] = useState(false); //  Track whether API has been called
     const navigation = useNavigation();
 
     // 📸 Open Camera
