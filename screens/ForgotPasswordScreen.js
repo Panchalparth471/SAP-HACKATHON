@@ -25,7 +25,7 @@ export default function ForgotPasswordScreen({ navigation }) {
 
             if (response.ok) {
                 Alert.alert("Success", "OTP sent to your email.");
-                navigation.navigate("reset", { email }); // ✅ Navigate to Reset Screen with Email
+                navigation.navigate("reset", { email }); //  Navigate to Reset Screen with Email
             } else {
                 Alert.alert("Error", data.message || "Something went wrong.");
             }
