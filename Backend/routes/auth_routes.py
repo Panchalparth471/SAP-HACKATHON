@@ -61,9 +61,9 @@ def forget_password():
     if not user:
         return jsonify({'message': 'User not found'}), 404
 
-    otp = User.generate_otp(email)  # ✅ Generate and store OTP inside the user's document
+    otp = User.generate_otp(email)  #   Generate and store OTP inside the user's document
 
-    # ✅ Send OTP via email
+    #   Send OTP via email
     send_reset_email(email, f"Your OTP is: {otp}")
 
     return jsonify({'message': 'OTP sent to your email'}), 200
@@ -85,7 +85,7 @@ def reset_password():
     if not email or not otp or not new_password:
         return jsonify({'message': 'Email, OTP, and new password are required'}), 400
 
-    # ✅ Check OTP validity before updating password
+    #   Check OTP validity before updating password
     if not User.verify_otp(email, otp):
         return jsonify({'message': 'Invalid or expired OTP'}), 400
 
@@ -93,7 +93,7 @@ def reset_password():
     if not user:
         return jsonify({'message': 'User not found'}), 404
 
-    # ✅ Hash and update password
+    #   Hash and update password
     hashed_password = generate_password_hash(new_password)
     User.update(user['_id'], {'password': hashed_password})
 
