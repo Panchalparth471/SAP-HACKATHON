@@ -13,8 +13,8 @@ import re
 
 # API URLs
 OPENFDA_URL = "https://api.fda.gov/drug/label.json"
-SERPAPI_KEY = "84e040e4573fee205b1843aa03ed88cee9d7dffb6207496e15240bc9e483e360"
-API_KEY = "AIzaSyDqVZpzmhfjIhMR69k3HDpuOCojPJ32hHQ"
+SERPAPI_KEY = ""
+API_KEY = ""
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 genai.configure(api_key=API_KEY)
 
