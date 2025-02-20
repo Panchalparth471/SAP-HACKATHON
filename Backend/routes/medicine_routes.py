@@ -8,7 +8,7 @@ from config import Config
 import pytz
 from utils.token_utils import verify_token
 from firebase_admin import credentials, messaging, initialize_app
-from werkzeug.utils import secure_filename  # ✅ Import this at the top
+from werkzeug.utils import secure_filename  #   Import this at the top
 import os
 import google.generativeai as genai
 from PIL import Image
@@ -23,7 +23,7 @@ initialize_app(cred)
 medicine_bp = Blueprint("medicine", __name__)
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-API_KEY = "AIzaSyDqVZpzmhfjIhMR69k3HDpuOCojPJ32hHQ"
+API_KEY = ""
 genai.configure(api_key=API_KEY)
 def decode_token(token):
     """Extract user_id from token"""
@@ -215,7 +215,7 @@ def search_doctor():
     if not name_query:
         return jsonify({'message': 'Please provide a name to search'}), 400
 
-    # ✅ Find doctors by name and return their user_id (doctor_id)
+    #   Find doctors by name and return their user_id (doctor_id)
     doctors = User.find_by_role_and_name('doctor', name_query)
 
     if not doctors:
@@ -229,7 +229,7 @@ def search_doctor():
 @medicine_bp.route('/request-access', methods=['POST'])
 def request_access():
     token = request.headers.get("Authorization")  # Fetch user token
-    user_id = decode_token(token)  # ✅ Extract patient_id from token
+    user_id = decode_token(token)  #   Extract patient_id from token
     data = request.get_json()
 
     if not user_id or "doctor_id" not in data:
@@ -237,23 +237,23 @@ def request_access():
 
     doctor_id = data["doctor_id"]
 
-    # ✅ Check if `access_requests` exists and is an array
+    #   Check if `access_requests` exists and is an array
     doctor = User.get_by_id(doctor_id)
     if not doctor:
         return jsonify({"message": "Doctor not found"}), 404
 
     if "access_requests" not in doctor or not isinstance(doctor["access_requests"], list):
-        # ✅ Convert to array if it's missing or of incorrect type
+        #   Convert to array if it's missing or of incorrect type
         User.update(doctor_id, {"$set": {"access_requests": []}})
 
-    # ✅ Store request in User model
+    #   Store request in User model
     request_entry = {
         "patient_id": user_id,
         "doctor_id": doctor_id,
         "requested_at": datetime.utcnow().replace(tzinfo=pytz.utc)
     }
 
-    # ✅ Now safely push the request
+    #   Now safely push the request
     update_result = User.update(doctor_id, {"$push": {"access_requests": request_entry}})
 
     if update_result.modified_count == 0:
@@ -261,7 +261,7 @@ def request_access():
 
     return jsonify({"message": "Access request sent successfully"}), 200
 
-# ✅ Endpoint: Doctor retrieves patient details
+#   Endpoint: Doctor retrieves patient details
 @medicine_bp.route('/get-patient-details/<patient_id>', methods=['GET'])
 def get_patient_details(patient_id):
     doctor_id = request.args.get('doctor_id')
@@ -295,14 +295,14 @@ def allowed_file(filename):
 @medicine_bp.route('/upload-reports', methods=['POST'])
 def upload_reports():
     try:
-        # ✅ Verify user authentication
+        #   Verify user authentication
         token = request.headers.get("Authorization")
         user_id = decode_token(token)
         
         if not user_id:
             return jsonify({"error": "Unauthorized access"}), 401
 
-        # ✅ Check if an image file is uploaded
+        #   Check if an image file is uploaded
         if 'image' not in request.files:
             return jsonify({"error": "No image file provided"}), 400
 
@@ -314,13 +314,13 @@ def upload_reports():
         if not allowed_file(file.filename):
             return jsonify({"error": "Invalid file type. Allowed types: jpg, jpeg, png"}), 400
 
-        # ✅ Convert image to bytes
+        #   Convert image to bytes
         image = Image.open(file.stream).convert("RGB")
         with io.BytesIO() as output:
             image.save(output, format="JPEG")
             image_bytes = output.getvalue()
 
-        # ✅ Step 1: Extract Full Text from Image
+        #   Step 1: Extract Full Text from Image
         model = genai.GenerativeModel("gemini-1.5-flash")
         response = model.generate_content([
             {"parts": [
@@ -331,7 +331,7 @@ def upload_reports():
 
         extracted_text = response.text.strip() if response else "No text recognized"
 
-        # ✅ Step 2: Summarize Extracted Text
+        #   Step 2: Summarize Extracted Text
         summary_response = model.generate_content([
             {"parts": [
                 {"text": f"Summarize the following medical report text:\n\n{extracted_text}"}
@@ -351,7 +351,7 @@ def upload_reports():
     except Exception as e:
         return jsonify({"error": "An error occurred", "message": str(e)}), 500
 
-# ✅ 2️⃣ API to Retrieve Saved Reports
+#   2️⃣ API to Retrieve Saved Reports
 @medicine_bp.route("/get-reports/<user_id>", methods=["GET"])
 def get_reports(user_id):
     reports = User.get_reports(user_id)
@@ -367,37 +367,37 @@ def get_requests(doctor_id):
     - Returns a list of requests with patient details.
     """
     try:
-        # ✅ Get the token from request headers
+        #   Get the token from request headers
         token = request.headers.get("Authorization")
         if not token or not token.startswith("Bearer "):
             return jsonify({"error": "Missing or invalid Authorization token"}), 401
 
-        # ✅ Remove "Bearer " prefix and verify token
+        #   Remove "Bearer " prefix and verify token
         token = token.split(" ")[1]
         decoded_user_id = verify_token(token)
 
         if not decoded_user_id:
             return jsonify({"error": "Invalid or expired token"}), 401
 
-        # ✅ Ensure the requested doctor ID matches the token user ID
+        #   Ensure the requested doctor ID matches the token user ID
         if str(decoded_user_id) != str(doctor_id):
             return jsonify({"error": "Unauthorized request"}), 403
 
-        # ✅ Verify if the doctor exists
+        #   Verify if the doctor exists
         doctor = User.get_by_id(doctor_id)
         if not doctor or doctor.get("role") != "doctor":
             return jsonify({"error": "Doctor not found"}), 404
 
-        # ✅ Fetch pending access requests
+        #   Fetch pending access requests
         requests = []
         access_requests = doctor.get("access_requests", [])
 
-        # ✅ Ensure `access_requests` is a list of dictionaries
+        #   Ensure `access_requests` is a list of dictionaries
         if not isinstance(access_requests, list):
             access_requests = []  # Default to an empty list if the format is incorrect
 
         for request_entry in access_requests:
-            if isinstance(request_entry, dict) and "patient_id" in request_entry:  # ✅ Ensure dictionary format
+            if isinstance(request_entry, dict) and "patient_id" in request_entry:  #   Ensure dictionary format
                 patient = User.get_by_id(request_entry["patient_id"])
                 if patient:
                     requests.append({
@@ -417,7 +417,7 @@ def get_requests(doctor_id):
 def accept_request():
     """API for doctors to accept patient requests and grant access."""
     try:
-        # ✅ Extract doctor authentication
+        #   Extract doctor authentication
         token = request.headers.get("Authorization")
         doctor_id = decode_token(token)  # 🔹 Extract doctor ID from token
 
@@ -430,20 +430,20 @@ def accept_request():
         if not patient_id:
             return jsonify({'message': 'Missing patient_id'}), 400
 
-        # ✅ Ensure doctor exists
+        #  Ensure doctor exists
         doctor = User.get_by_id(doctor_id)
         if not doctor or doctor.get('role') != 'doctor':
             return jsonify({'message': 'Doctor not found'}), 404
 
-        # ✅ Find the request in `access_requests`
+        #   Find the request in `access_requests`
         access_requests = doctor.get("access_requests", [])
         if not isinstance(access_requests, list):
             access_requests = []  # Default to an empty list
 
-        # ✅ Filter out accepted request and update MongoDB
+        #   Filter out accepted request and update MongoDB
         updated_requests = [req for req in access_requests if req.get("patient_id") != patient_id]
 
-        # ✅ Update doctor record
+        #   Update doctor record
         update_result = User.update(doctor_id, {
             "$set": {"access_requests": updated_requests},  # Remove accepted request
             "$addToSet": {"authorized_patients": patient_id}  # Add patient to authorized list
@@ -464,14 +464,14 @@ def save_summary():
     Saves the extracted report summary in the user's profile.
     """
     try:
-        # ✅ Authenticate User
+        #   Authenticate User
         token = request.headers.get("Authorization")
         user_id = decode_token(token)
 
         if not user_id:
             return jsonify({"error": "Unauthorized access"}), 401
 
-        # ✅ Extract Summary Data from Request
+        #   Extract Summary Data from Request
         data = request.json
         extracted_text = data.get("extracted_text", "").strip()
         summary = data.get("summary", "").strip()
@@ -479,14 +479,14 @@ def save_summary():
         if not extracted_text or not summary:
             return jsonify({"error": "Missing extracted text or summary"}), 400
 
-        # ✅ Create Report Entry
+        #   Create Report Entry
         report_entry = {
             "summary": summary,
             "extracted_text": extracted_text,
             "created_at": datetime.now(pytz.utc)
         }
 
-        # ✅ Save the report under the user's `reports` field
+        #   Save the report under the user's `reports` field
         update_result = User.update(user_id, {"$push": {"reports": report_entry}})
 
         if update_result.modified_count == 0:
@@ -503,19 +503,19 @@ def get_authorized_patients_data(doctor_id):
     Fetch reports, saved medicines, and current medicines of all authorized patients for a given doctor.
     """
     try:
-        # ✅ Authenticate Doctor
+        #   Authenticate Doctor
         token = request.headers.get("Authorization")
         decoded_user_id = decode_token(token)
 
         if not decoded_user_id or str(decoded_user_id) != str(doctor_id):
             return jsonify({"error": "Unauthorized access"}), 403
 
-        # ✅ Retrieve Doctor's Record
+        #   Retrieve Doctor's Record
         doctor = User.get_by_id(doctor_id)
         if not doctor or doctor.get("role") != "doctor":
             return jsonify({"error": "Doctor not found"}), 404
 
-        # ✅ Retrieve Details of Authorized Patients
+        #   Retrieve Details of Authorized Patients
         authorized_patients = doctor.get("authorized_patients", [])
         patients_data = []
 
