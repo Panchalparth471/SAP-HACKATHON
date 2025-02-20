@@ -5,12 +5,12 @@ import axios from "axios";
 const API_URL = "http://192.168.189.54:5001/auth/reset_password";
 
 export default function ResetPasswordScreen({ navigation, route }) {
-    const [email, setEmail] = useState(route.params?.email || ""); // ✅ Get email from previous screen
+    const [email, setEmail] = useState(route.params?.email || ""); //  Get email from previous screen
     const [otp, setOtp] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
 
-    // ✅ Handle Password Reset
+    //  Handle Password Reset
     const resetPassword = async () => {
         if (!email.trim() || !otp.trim() || !password.trim()) {
             Alert.alert("Error", "Please fill in all fields.");
@@ -23,7 +23,7 @@ export default function ResetPasswordScreen({ navigation, route }) {
 
             if (response.status === 200) {
                 Alert.alert("Success", "Password updated successfully!");
-                navigation.navigate("login"); // ✅ Redirect to login
+                navigation.navigate("login"); //  Redirect to login
             } else {
                 Alert.alert("Error", response.data.message || "Something went wrong.");
             }
@@ -39,7 +39,7 @@ export default function ResetPasswordScreen({ navigation, route }) {
             <Text style={styles.header}>Reset Password</Text>
             <Text style={styles.subheader}>Enter OTP and your new password</Text>
 
-            {/* ✅ Email Field */}
+            {/*  Email Field */}
             <TextInput
                 style={styles.input}
                 placeholder="Enter Your Email"
@@ -47,10 +47,10 @@ export default function ResetPasswordScreen({ navigation, route }) {
                 autoCapitalize="none"
                 value={email}
                 onChangeText={setEmail}
-                editable={!route.params?.email} // ✅ If email is passed, disable editing
+                editable={!route.params?.email} //  If email is passed, disable editing
             />
 
-            {/* ✅ OTP Field */}
+            {/*  OTP Field */}
             <TextInput
                 style={styles.input}
                 placeholder="Enter OTP"
@@ -59,7 +59,7 @@ export default function ResetPasswordScreen({ navigation, route }) {
                 onChangeText={setOtp}
             />
 
-            {/* ✅ New Password Field */}
+            {/*  New Password Field */}
             <TextInput
                 style={styles.input}
                 placeholder="Enter New Password"
@@ -68,7 +68,7 @@ export default function ResetPasswordScreen({ navigation, route }) {
                 onChangeText={setPassword}
             />
 
-            {/* ✅ Submit Button */}
+            {/*  Submit Button */}
             <TouchableOpacity style={styles.submitButton} onPress={resetPassword} disabled={loading}>
                 <Text style={styles.buttonText}>{loading ? "Processing..." : "Submit"}</Text>
             </TouchableOpacity>
@@ -76,7 +76,7 @@ export default function ResetPasswordScreen({ navigation, route }) {
     );
 }
 
-// ✅ Reuse existing styles
+//  Reuse existing styles
 const styles = StyleSheet.create({
     container: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#f9f9f9", padding: 20 },
     header: { fontSize: 24, fontWeight: "bold" },
