@@ -3,8 +3,8 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 def send_reset_email(email, reset_url):
-    sender_email = "xzxzx9377@gmail.com"
-    sender_password = "whja atqc uhqd wltx"  # Ensure this is an app password, not your actual password
+    sender_email = "YOUR EMAIL"
+    sender_password = "YOUR PASSWORD"  # Ensure this is an app password, not your actual password
     subject = "Password Reset Request"
     body = f"""
     <html>
