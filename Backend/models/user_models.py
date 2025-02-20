@@ -18,7 +18,7 @@ class User:
             'name': name,
             'email': email,
             'password': hashed_password,
-            'role': role,  # ✅ Add role field
+            'role': role,  #   Add role field
             'created_at': datetime.now(timezone.utc),
             'updated_at': datetime.now(timezone.utc),
             'saved_medicines': [],
@@ -51,7 +51,7 @@ class User:
      if not isinstance(update_data, dict):
         raise ValueError("update_data must be a dictionary.")
 
-     return mongo.db.users.update_one({'_id': ObjectId(user_id)}, update_data)  # ✅ Correct
+     return mongo.db.users.update_one({'_id': ObjectId(user_id)}, update_data)  #   Correct
 
 
     @classmethod
@@ -64,7 +64,7 @@ class User:
         otp_entry = {
             "otp": otp,
             "created_at": datetime.now(timezone.utc),
-            "verified": False  # ✅ Track whether OTP was used
+            "verified": False  #   Track whether OTP was used
         }
 
         mongo.db.users.update_one(
@@ -80,7 +80,7 @@ class User:
         if not user or "otps" not in user or not user["otps"]:
             return None
 
-        return user["otps"][-1]  # ✅ Get the last OTP entry
+        return user["otps"][-1]  #   Get the last OTP entry
 
     @classmethod
     def get_all_users(cls):
@@ -94,7 +94,7 @@ class User:
 
         for otp_entry in user["otps"]:
             if otp_entry["otp"] == otp and not otp_entry["verified"]:
-                otp_entry["verified"] = True  # ✅ Mark OTP as used
+                otp_entry["verified"] = True  #   Mark OTP as used
                 mongo.db.users.update_one(
                     {"email": email},
                     {"$set": {"otps": user["otps"]}}
@@ -116,13 +116,13 @@ class User:
     def find_by_role_and_name(cls, role, name_query):
      """Find users by role and search for their name (case-insensitive)."""
      doctors = mongo.db.users.find(
-        {'role': role, 'name': {'$regex': Regex(name_query, 'i')}},  # ✅ Case-insensitive search
+        {'role': role, 'name': {'$regex': Regex(name_query, 'i')}},  #   Case-insensitive search
         {'password': 0}  # Exclude password from results
      )
 
      return [
         {
-            'doctor_id': str(doctor['_id']),  # ✅ Send `doctor_id` (user_id)
+            'doctor_id': str(doctor['_id']),  #   Send `doctor_id` (user_id)
             'name': doctor['name'],
             'email': doctor['email']
         }
