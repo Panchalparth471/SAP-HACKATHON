@@ -8,10 +8,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
 const UploadScreen = () => {
-    const [selectedImages, setSelectedImages] = useState([]); // ✅ Store uploaded images
+    const [selectedImages, setSelectedImages] = useState([]); //  Store uploaded images
     const [isLoading, setIsLoading] = useState(false);
-    const [summary, setSummary] = useState(""); // ✅ Store summarized report
-    const [extractedText, setExtractedText] = useState(""); // ✅ Store extracted text
+    const [summary, setSummary] = useState(""); //  Store summarized report
+    const [extractedText, setExtractedText] = useState(""); //  Store extracted text
 
     // 🔹 **Pick Multiple Images**
     const handlePickImages = async () => {
@@ -23,14 +23,14 @@ const UploadScreen = () => {
             }
 
             const result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images, // ✅ Only allow images
+                mediaTypes: ImagePicker.MediaTypeOptions.Images, //  Only allow images
                 allowsMultipleSelection: true,
                 quality: 1, // High-quality images
             });
 
             if (result.canceled) return;
 
-            // ✅ Append newly selected images to the existing list
+            //  Append newly selected images to the existing list
             setSelectedImages([...selectedImages, ...result.assets]);
         } catch (error) {
             console.error("Error picking images:", error);
@@ -69,7 +69,7 @@ const UploadScreen = () => {
             setSummary(response.data.summary || "No summary generated.");
             setExtractedText(response.data.recognized_text || "No extracted text available.");
             Alert.alert("Success", "Images uploaded and report summarized!");
-            setSelectedImages([]); // ✅ Clear images after upload
+            setSelectedImages([]); //  Clear images after upload
         } catch (error) {
             console.error("API Error:", error.response?.data || error.message);
             Alert.alert("Error", "Failed to upload images.");
@@ -159,7 +159,7 @@ const handleSaveSummary = async () => {
     );
 };
 
-// ✅ **Updated Styles**
+//  **Updated Styles**
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: "white", padding: 20, justifyContent: "space-between" },
     button: { backgroundColor: "#0E64D2", padding: 15, borderRadius: 8, alignItems: "center", marginBottom: 10 },
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     summaryContainer: { marginTop: 15, padding: 15, backgroundColor: "#f1f1f1", borderRadius: 8 },
     summaryText: { fontSize: 16, color: "#333", textAlign: "left" },
     boldText: { fontWeight: "bold" },
-    buttonContainer: { marginBottom: 20 }, // ✅ Added to push buttons lower
+    buttonContainer: { marginBottom: 20 }, //  Added to push buttons lower
 });
 
 export default UploadScreen;
