@@ -11,9 +11,9 @@ const HomeScreen = ({ navigation }) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [userRole, setUserRole] = useState(null);
-    const [authorizedPatients, setAuthorizedPatients] = useState([]); // ✅ Store authorized patients' details
+    const [authorizedPatients, setAuthorizedPatients] = useState([]); //  Store authorized patients' details
 
-    // ✅ Fetch user role & authorized patients (if doctor)
+    //  Fetch user role & authorized patients (if doctor)
     useEffect(() => {
         const fetchUserData = async () => {
             const role = await AsyncStorage.getItem("user_role");
@@ -157,7 +157,7 @@ const HomeScreen = ({ navigation }) => {
     );
 };
 
-// ✅ **Updated Styles**
+//  **Updated Styles**
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: "white", paddingBottom: 80 },
 
